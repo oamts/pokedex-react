@@ -1,0 +1,15 @@
+p{
+    color: red;
+}
+
+div {
+    float: left;
+    padding: 10px;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    column-gap: 10px;
+    row-gap: 15px;
+}
