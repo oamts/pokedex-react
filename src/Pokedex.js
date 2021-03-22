@@ -1,7 +1,7 @@
 import React from 'react';
 import './Pokedex.scss';
 import {gePokemonEntries, gePokemonName, getPokedex} from "./functions";
-import {map} from "ramda";
+import * as R from 'ramda'
 
 function PokemonBlock(props) {
     return (
@@ -18,7 +18,12 @@ class Pokedex extends React.Component {
         super(props);
         this.state = {
             pokedex: null,
+            searchTerm: '',
         }
+        this.handleChangeSearch = this.handleChangeSearch.bind(this)
+    }
+
+    componentDidMount() {
         this.loadPokedex();
     }
 
@@ -34,16 +39,25 @@ class Pokedex extends React.Component {
         })
     }
 
+    handleChangeSearch(event) {
+        this.setState({searchTerm: event.target.value});
+    }
+
     render() {
         const pokemon_entries = gePokemonEntries(this.state.pokedex)
+        const pokemon_entries_search = pokemon_entries
+            .filter( pokemon => gePokemonName(pokemon).includes(this.state.searchTerm));
 
         return (
              <div>
                  pokedex
+                 <div className="search">
+                     <input type="text" value={this.state.searchTerm} onChange={this.handleChangeSearch} />
+                 </div>
                  <div className="container">
-                     {map((pokemon) =>  {
+                     {R.map((pokemon) =>  {
                           return <PokemonBlock key={gePokemonName(pokemon)} pokemon={pokemon}/>
-                     }, pokemon_entries)}
+                     }, pokemon_entries_search)}
                  </div>
              </div>
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import {isNil, path, prop} from "ramda";
+import * as R from 'ramda'
 
 // gePokemonEntries :: -> Promise
 export const getPokedex = () => {
@@ -8,10 +8,10 @@ export const getPokedex = () => {
 
 // gePokemonEntries :: Object(pokedex) -> Array(pokemon_entrie)
 export const gePokemonEntries = (pokedex) => {
-    return isNil(pokedex) ? [] : prop('pokemon_entries', pokedex)
+    return R.isNil(pokedex) ? [] : R.prop('pokemon_entries', pokedex)
 }
 
 // gePokemonEntries :: Object(pokemon_entrie) -> String
 export const gePokemonName = (pokemon_entrie) => {
-    return path(['pokemon_species','name'], pokemon_entrie)
+    return R.path(['pokemon_species','name'], pokemon_entrie)
 }
