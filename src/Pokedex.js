@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './Pokedex.scss';
 import {gePokemonEntries, gePokemonName, getPokedex} from "./functions";
 import * as R from 'ramda'
@@ -6,63 +6,65 @@ import * as R from 'ramda'
 function PokemonBlock(props) {
     return (
         <div className="item">
-            <img src={`https://img.pokemondb.net/sprites/sword-shield/icon/${gePokemonName(props.pokemon)}.png`} alt="Logo" />
+            <img src={`https://img.pokemondb.net/sprites/sword-shield/icon/${gePokemonName(props.pokemon)}.png`}
+                 alt="Logo"/>
             <p> {gePokemonName(props.pokemon)} </p>
         </div>
     )
 }
 
-class Pokedex extends React.Component {
+function Pokedex() {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            pokedex: null,
-            searchTerm: '',
-        }
-        this.handleChangeSearch = this.handleChangeSearch.bind(this)
-    }
+    const [pokedex, setPokedex] = useState(null)
+    const [searchTerm, setSearchTerm] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
+    const [isError, setIsError] = useState(false)
 
-    componentDidMount() {
-        this.loadPokedex();
-    }
-
-    loadPokedex(){
-        getPokedex().then( response => {
-            this.setState({
-                pokedex: response.data
-            })
+    function loadPokedex() {
+        setIsLoading(true)
+        setIsError(false)
+        getPokedex().then(response => {
+            setPokedex(response.data)
         })
-        .catch(function (error) {
-            // handle error
-            console.log(error);
+        .catch( erro => {
+            console.log(erro)
+            setIsError(true)
+        })
+        .finally( () => {
+            setIsLoading(false)
         })
     }
 
-    handleChangeSearch(event) {
-        this.setState({searchTerm: event.target.value});
+    function handleChangeSearch(event) {
+        setSearchTerm(event.target.value)
     }
 
-    render() {
-        const pokemon_entries = gePokemonEntries(this.state.pokedex)
-        const pokemon_entries_search = pokemon_entries
-            .filter( pokemon => gePokemonName(pokemon).includes(this.state.searchTerm));
+    useEffect(() => {
+        loadPokedex()
+    }, [])
 
-        return (
-             <div>
-                 pokedex
-                 <div className="search">
-                     <input type="text" value={this.state.searchTerm} onChange={this.handleChangeSearch} />
-                 </div>
-                 <div className="container">
-                     {R.map((pokemon) =>  {
-                          return <PokemonBlock key={gePokemonName(pokemon)} pokemon={pokemon}/>
-                     }, pokemon_entries_search)}
-                 </div>
-             </div>
+    const pokemon_entries = gePokemonEntries(pokedex)
+    const pokemon_entries_search = pokemon_entries
+        .filter(pokemon => gePokemonName(pokemon).includes(searchTerm))
 
-         )
-    }
+    return (
+        <div>
+            pokedex
+            <div className="search">
+                <input type="text" value={searchTerm} onChange={handleChangeSearch}/>
+            </div>
+            <div className="container">
+                {isError && <div>Something went wrong ...</div>}
+                {isLoading ? (
+                    <div>Loading ...</div>
+                ) : (
+                    R.map((pokemon) => {
+                        return <PokemonBlock key={gePokemonName(pokemon)} pokemon={pokemon}/>
+                    }, pokemon_entries_search)
+                )}
+            </div>
+        </div>
+    )
 }
 
 export default Pokedex

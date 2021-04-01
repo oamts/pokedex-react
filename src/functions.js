@@ -2,55 +2,71 @@ import axios from "axios";
 import * as R from 'ramda'
 
 // gePokemonEntries :: -> Promise
-/*
-{
-  "id": 1,
-  "name": "generation-i",
-  "abilities": [],
-  "main_region": {
-    "name": "kanto",
-    "url": "https://pokeapi.co/api/v2/region/1/"
-  },
-  "moves": [
+export const pokedexMock = JSON.parse(`{
+  "id": 2,
+  "name": "kanto",
+  "is_main_series": true,
+  "descriptions": [
     {
-      "name": "pound",
-      "url": "https://pokeapi.co/api/v2/move/1/"
-    }
-  ],
-  "names": [
-    {
-      "name": "Generation I",
+      "description": "Rot/Blau/Gelb Kanto Dex",
       "language": {
         "name": "de",
         "url": "https://pokeapi.co/api/v2/language/6/"
       }
     }
   ],
-  "pokemon_species": [
+  "names": [
     {
-      "name": "bulbasaur",
-      "url": "https://pokeapi.co/api/v2/pokemon-species/1/"
+      "name": "Kanto",
+      "language": {
+        "name": "de",
+        "url": "https://pokeapi.co/api/v2/language/6/"
+      }
     }
   ],
-  "types": [
+  "pokemon_entries": [
     {
-      "name": "normal",
-      "url": "https://pokeapi.co/api/v2/type/1/"
+      "entry_number": 1,
+      "pokemon_species": {
+        "name": "bulbasaur",
+        "url": "https://pokeapi.co/api/v2/pokemon-species/1/"
+      }
+    },
+    {
+      "entry_number": 2,
+      "pokemon_species": {
+        "name": "ivysaur",
+        "url": "https://pokeapi.co/api/v2/pokemon-species/2/"
+      }
+    },
+    {
+      "entry_number": 3,
+      "pokemon_species": {
+        "name": "venusaur",
+        "url": "https://pokeapi.co/api/v2/pokemon-species/3/"
+      }
     }
   ],
+  "region": {
+    "name": "kanto",
+    "url": "https://pokeapi.co/api/v2/region/1/"
+  },
   "version_groups": [
     {
       "name": "red-blue",
       "url": "https://pokeapi.co/api/v2/version-group/1/"
     }
   ]
-}
-*/
+}`)
 
 export const isNilOrEmpty = R.anyPass([R.isNil, R.isEmpty]);
 
 export const getPokedex = () => {
     return axios.get('https://pokeapi.co/api/v2/pokedex/2')
+}
+
+export const getMockPokedex = () => {
+    return Promise.resolve({data: pokedexMock})
 }
 
 // gePokemonEntries :: Object(pokedex) -> Array(pokemon_entrie)
